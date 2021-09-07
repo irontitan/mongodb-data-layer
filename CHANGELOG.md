@@ -1,3 +1,5 @@
+## [1.0.1](https://github.com/irontitan/mongodb-data-layer/compare/v1.0.0...v1.0.1) (2021-09-07)
+
 # 1.0.0 (2021-09-07)
 
 
