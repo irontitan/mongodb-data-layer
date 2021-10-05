@@ -1,11 +1,11 @@
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 import { Entity } from './structures/interfaces/Entity'
 import { PaginatedQueryResult } from './structures/interfaces/PaginatedQueryResult'
 
 export abstract class MongodbRepository<TEntity extends Entity> {
-  constructor (protected readonly collection: Collection) { }
+  constructor (protected readonly collection: Collection<TEntity>) { }
 
-  protected async findOneBy (query: Record<string, any>): Promise<TEntity | null> {
+  protected async findOneBy (query: Filter<TEntity>): Promise<TEntity | null> {
     return this.collection.find<TEntity>(query)
       .limit(1)
       .toArray()
@@ -13,30 +13,30 @@ export abstract class MongodbRepository<TEntity extends Entity> {
       .then((result) => result || null)
   }
 
-  protected async unpaginatedSearch (query: Record<string, any>): Promise<TEntity[]> {
+  protected async unpaginatedSearch (query: Filter<TEntity>): Promise<TEntity[]> {
     return this.collection.find<TEntity>(query)
       .toArray()
   }
 
-  protected async existsBy (query: Record<string, any>): Promise<boolean> {
+  protected async existsBy (query: Filter<TEntity>): Promise<boolean> {
     return this.collection.countDocuments(query)
       .then((count: number) => count > 0)
   }
 
   private async update (entity: TEntity): Promise<TEntity> {
     const { _id, ...payload } = entity
-    await this.collection.updateOne({ _id }, { $set: payload })
+    await this.collection.updateOne({ _id }, { $set: payload as any })
 
     return entity
   }
 
   protected async create (entity: TEntity) {
-    await this.collection.insertOne(entity)
+    await this.collection.insertOne(entity as any)
 
     return entity
   }
 
-  protected async runPaginatedQuery (query: Record<string, any>, page = 0, size = 10): Promise<PaginatedQueryResult<TEntity>> {
+  protected async runPaginatedQuery (query: Filter<TEntity>, page = 0, size = 10): Promise<PaginatedQueryResult<TEntity>> {
     const total = await this.collection.countDocuments(query)
     const from = page * size
 
