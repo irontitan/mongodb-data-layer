@@ -1,7 +1,7 @@
 {
   "name": "@irontitan/mongodb-data-layer",
   "main": "dist/index.js",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Simple set of tools to help working with mongodb",
   "scripts": {
     "test": "mocha -b -r ts-node/register test/**/*.ts",
